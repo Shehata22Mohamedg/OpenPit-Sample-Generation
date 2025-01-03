@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Open Pit Samples Generation</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+
+<body>
+    <div class="card">
+        <h1>Open Pit Samples Generation</h1>
+
+        <form action="/" method="POST" enctype="multipart/form-data">
+            <label for="excel_file">Upload Excel File:</label>
+            <div class="file-upload">
+                <i class="fas fa-upload"></i>
+                <input type="file" name="excel_file" id="excel_file" required>
+            </div>
+            <br>
+            <div class="column-guide">
+                <h3>Expected Columns:</h3>
+                <p>
+                    Start Serial, Hole Name, Final Depth, QAQC_1, STD_No_1, QAQC_2, STD_No_2, QAQC_3, STD_No_3, QAQC_4,
+                    STD_No_4, QAQC_5, STD_No_5
+                </p>
+            </div>
+
+            <br>
+            <div class="form-inline">
+                <div>
+                    <label for="depth_increment">Depth Increment:</label>
+                    <input type="number" step="any" name="depth_increment" value="2.5" required>
+                </div>
+                <div>
+                    <label for="merge_if">Merge If Depth < (m):</label>
+                            <input type="number" step="any" name="merge_if" value="0.6" required>
+                </div>
+            </div>
+            <input type="submit" id="process-btn" value="Generate Samples" disabled>
+        </form>
+    </div>
+
+    {% if success %}
+    <div class="card result-card">
+        <h2>Download Generated Files</h2>
+        <div class="generated-files">
+            <ul>
+                <li><a href="{{ url_for('download_file', filename='Generated Samples.csv') }}">Download Generated
+                        Samples.csv</a></li>
+                <li><a href="{{ url_for('download_file', filename='STD Samples.csv') }}">Download STD Samples.csv</a>
+                </li>
+                <li><a href="{{ url_for('download_file', filename='Interval Samples.csv') }}">Download Interval
+                        Samples.csv</a></li>
+            </ul>
+        </div>
+    </div>
+    {% endif %}
+
+    <script>
+        // Enable the Process button only when a file is uploaded
+        const fileInput = document.getElementById('excel_file');
+        const processBtn = document.getElementById('process-btn');
+
+        fileInput.addEventListener('change', function () {
+            if (fileInput.files.length > 0) {
+                processBtn.disabled = false;
+            } else {
+                processBtn.disabled = true;
+            }
+        });
+
+        // Hide success alert after 5 seconds
+        const alert = document.getElementById('success-alert');
+        if (alert) {
+            setTimeout(() => {
+                alert.classList.add('hide');
+            }, 5000);
+        }
+    </script>
+</body>
+
+</html>
